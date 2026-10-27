@@ -15,9 +15,12 @@ stages {
     }
 
     stage('Test') {
-        steps {
-            echo 'Running tests'
-            bat 'mvn test'
+    steps {
+        echo 'Checking test source files'
+        bat 'dir src\\test\\java\\com\\example\\invoice'
+        bat 'mvn -B clean test'
+    }
+}
         }
     }
 
