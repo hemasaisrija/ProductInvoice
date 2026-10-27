@@ -1,0 +1,45 @@
+ pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                bat 'mvn -B -DskipTests clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat 'mvn -B test'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                archiveArtifacts artifacts: 'target/*.jar,target/*.war',
+                                 fingerprint: true
+            }
+        }
+    }
+
+    post {
+        always {
+            junit testResults: 'target/surefire-reports/*.xml',
+                  allowEmptyResults: true
+        }
+
+        success {
+            echo 'ProductInvoice CI pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check the Console Output and test reports.'
+        }
+    }
+}
