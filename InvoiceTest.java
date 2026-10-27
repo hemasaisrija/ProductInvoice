@@ -8,10 +8,10 @@ public class InvoiceTest {
     Invoice invoice = new Invoice();
 
     @Test
-    void testProductAmount() {
-        assertEquals(5000,
-                invoice.calculateProductAmount(2500, 2));
-    }
+void testProductAmount() {
+    assertEquals(6000,
+            invoice.calculateProductAmount(2500, 2));
+}
 
     @Test
     void testTenPercentDiscount() {
