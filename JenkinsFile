@@ -1,35 +1,52 @@
+```groovy
 pipeline {
-agent any
-stages {
-    stage('Checkout') {
-        steps {
-            echo 'Fetching source code'
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Source code checkout completed'
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building the application'
+                bat 'mvn -B -DskipTests clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Checking test source files'
+                bat 'dir src\\test\\java\\com\\example\\invoice'
+                bat 'mvn -B clean test'
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                echo 'Archiving build artifacts'
+                archiveArtifacts artifacts: 'target/*.jar,target/*.war',
+                                 fingerprint: true
+            }
         }
     }
 
-    stage('Build') {
-        steps {
-            echo 'Building the application'
-            bat 'mvn clean compile'
+    post {
+        always {
+            junit testResults: 'target/surefire-reports/*.xml',
+                  allowEmptyResults: true
         }
-    }
 
-    stage('Test') {
-    steps {
-        echo 'Checking test source files'
-        bat 'dir src\\test\\java\\com\\example\\invoice'
-        bat 'mvn -B clean test'
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check the Console Output.'
+        }
     }
 }
-        }
-    }
-
-    stage('Archive Artifacts') {
-        steps {
-            echo 'Archiving build artifacts'
-            bat 'mvn package'
-        }
-    }
-}
-}
-
+```
