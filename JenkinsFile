@@ -1,50 +1,25 @@
 pipeline {
     agent any
-
     stages {
         stage('Checkout') {
             steps {
-                echo 'Source code checkout completed'
-                checkout scm
+                echo 'source code checkout completed'
             }
         }
-
         stage('Build') {
             steps {
-                echo 'Building the application'
-                bat 'mvn -B -DskipTests clean package'
+                bat 'mvn clean compile'
             }
         }
-
         stage('Test') {
             steps {
-                echo 'Checking test source files'
-                bat 'dir src\\test\\java\\com\\example\\invoice'
-                bat 'mvn -B clean test'
+                bat 'mvn test'
             }
         }
-
-        stage('Archive Artifacts') {
+        stage('Package Artifacts') {
             steps {
-                echo 'Archiving build artifacts'
-                archiveArtifacts artifacts: 'target/*.jar,target/*.war',
-                                 fingerprint: true
+                bat 'mvn package'
             }
-        }
-    }
-
-    post {
-        always {
-            junit testResults: 'target/surefire-reports/*.xml',
-                  allowEmptyResults: true
-        }
-
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-
-        failure {
-            echo 'Pipeline failed. Check the Console Output.'
         }
     }
 }
