@@ -1,24 +1,33 @@
+
 pipeline {
     agent any
+
     stages {
+
         stage('Checkout') {
             steps {
-                echo 'source code checkout completed'
+                echo 'Source code checkout completed'
+                checkout scm
             }
         }
+
         stage('Build') {
             steps {
                 bat 'mvn clean compile'
             }
         }
+
         stage('Test') {
             steps {
                 bat 'mvn test'
             }
         }
-        stage('Package Artifacts') {
+
+        stage('Archive Artifacts') {
             steps {
-                bat 'mvn package'
+                bat 'mvn package -DskipTests'
+                archiveArtifacts artifacts: 'target/*.jar',
+                                 fingerprint: true
             }
         }
     }
