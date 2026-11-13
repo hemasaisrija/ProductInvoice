@@ -42,4 +42,9 @@ void testProductAmount() {
         assertEquals(5310,
                 invoice.calculateFinalAmount(5000));
     }
+
+    @Test
+void intentionalFailureTest() {
+    assertEquals(10, 20);
+}
 }
